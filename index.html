@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>기쁨의 50일</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600;700&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#1a1006;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Noto Sans KR',sans-serif}
+
+.screen{width:min(390px,100vw);height:min(844px,100vh);position:relative;overflow:hidden;background:#FDF6EC}
+.page{position:absolute;inset:0;transition:transform .5s cubic-bezier(.77,0,.18,1),opacity .5s ease;will-change:transform;overflow:hidden}
+.page.hidden-left {transform:translateX(-100%);opacity:0;pointer-events:none}
+.page.hidden-right{transform:translateX(100%);opacity:0;pointer-events:none}
+.page.active{transform:translateX(0);opacity:1}
+
+/* ══ 애니메이션 ══ */
+@keyframes floatUp{from{opacity:0;transform:translateX(-50%) translateY(18px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+/* ══════════════════════════════
+   표지
+══════════════════════════════ */
+#cover{display:flex;flex-direction:column;background:#FDF6EC}
+.cv-top{background:#3A2A1A;flex:0 0 50%;position:relative;overflow:visible}
+.gold-bar{position:absolute;bottom:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#5a3800,#D4AA5A,#B8892A,#D4AA5A,#5a3800);z-index:10}
+.church-lbl{position:absolute;top:14px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:4px;color:#C49A3A;font-weight:300;z-index:5}
+.f-main{position:absolute;left:50%;bottom:-18%;transform:translateX(-50%);width:68%;z-index:6;filter:drop-shadow(0 6px 20px rgba(0,0,0,.5));animation:floatUp 1.2s cubic-bezier(.22,1,.36,1) both}
+.f-tl{position:absolute;top:-4%;left:-6%;width:28%;opacity:.75;z-index:4;animation:fadeIn 1.4s .1s both}
+.f-tr{position:absolute;top:-2%;right:-6%;width:28%;opacity:.75;z-index:4;animation:fadeIn 1.4s .15s both}
+.cv-bottom{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;padding:12% 20px 20px;overflow-y:auto;-webkit-overflow-scrolling:touch;gap:0}
+.f-bl{position:absolute;bottom:-6%;left:-6%;width:32%;opacity:.6;animation:fadeIn 1s .7s both;pointer-events:none}
+.f-br{position:absolute;bottom:-5%;right:-6%;width:32%;opacity:.6;animation:fadeIn 1s .75s both;pointer-events:none}
+.t1{font-family:'Noto Serif KR',serif;font-size:clamp(20px,5.5vw,26px);font-weight:700;color:#3A2A1A;letter-spacing:1px;animation:up .8s .3s both}
+.t2{font-family:'Noto Serif KR',serif;font-size:clamp(46px,13vw,62px);font-weight:700;color:#C4520A;line-height:1;animation:up .8s .4s both}
+.deco{display:flex;align-items:center;gap:10px;margin:8px 0 3px;animation:up .8s .5s both}
+.dl{width:56px;height:1.5px;background:linear-gradient(90deg,transparent,#B8892A)}
+.dr{width:56px;height:1.5px;background:linear-gradient(90deg,#B8892A,transparent)}
+.sub{font-size:clamp(10px,2.8vw,12px);color:#6B4C2A;letter-spacing:3px;margin-top:4px;animation:up .8s .55s both}
+.dt{font-size:clamp(9px,2.3vw,11px);color:#9A7A5A;letter-spacing:1px;margin-top:4px;animation:up .8s .6s both}
+.start-btn{margin-top:12px;padding:9px 26px;background:#B8892A;color:#FDF6EC;border:none;border-radius:20px;font-size:12px;letter-spacing:2px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;animation:up .8s .65s both;-webkit-tap-highlight-color:transparent;font-weight:400;flex-shrink:0}
+.start-btn:active{background:#9A7020}
+.cv-scripture{width:100%;margin-top:auto;padding-top:12px;background:#F5E9D4;border-radius:8px;padding:11px 13px 9px 16px;border-left:3.5px solid #B8892A;animation:up .8s .7s both;flex-shrink:0;position:relative;z-index:2;margin-top:12px}
+.cv-sv{font-family:'Noto Serif KR',serif;font-size:clamp(9px,2.2vw,11px);color:#6B4C2A;font-style:italic;line-height:1.65}
+.cv-sr{font-size:clamp(8px,2vw,10px);color:#9A7A5A;text-align:right;margin-top:3px}
+
+/* ══════════════════════════════
+   묵상 목록
+══════════════════════════════ */
+#list{display:flex;flex-direction:column;background:#FDF6EC}
+.list-header{background:linear-gradient(135deg,#2c1f0e,#5a3a1a);padding:16px 20px 12px;text-align:center;position:relative;flex-shrink:0}
+.list-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#D4AA5A,transparent)}
+.lh-back{position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#C49A3A;font-size:20px;cursor:pointer;-webkit-tap-highlight-color:transparent;line-height:1;padding:4px}
+.lh-title{font-size:13px;letter-spacing:4px;color:#D4AA5A;font-weight:300}
+.lh-sub{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;margin-top:3px;font-weight:300}
+
+.list-scroll{flex:1;overflow-y:auto;padding:12px 16px 20px;-webkit-overflow-scrolling:touch}
+.month-label{font-size:10px;letter-spacing:3px;color:#B8892A;font-weight:400;margin:16px 0 8px 2px}
+.month-label:first-child{margin-top:0}
+.day-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:4px}
+.day-item{aspect-ratio:1;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;position:relative;transition:transform .15s}
+.day-item:active{transform:scale(.94)}
+.day-item.unlocked{background:#fff;box-shadow:0 2px 8px rgba(58,42,26,.1)}
+.day-item.today{background:#B8892A;box-shadow:0 3px 12px rgba(184,137,42,.4)}
+.day-item.past{background:#f7f0e6}
+.day-item.locked{background:#ede8e0;cursor:default}
+.day-item.locked:active{transform:none}
+.di-num{font-size:16px;font-weight:700;line-height:1}
+.day-item.unlocked .di-num,.day-item.past .di-num{color:#3A2A1A}
+.day-item.today .di-num{color:#fff}
+.day-item.locked .di-num{color:#c0b4a4}
+.di-date{font-size:8px;margin-top:2px;font-weight:300}
+.day-item.unlocked .di-date,.day-item.past .di-date{color:#9A7A5A}
+.day-item.today .di-date{color:rgba(255,255,255,.8)}
+.day-item.locked .di-date{color:#c0b4a4}
+.di-lock{font-size:9px;position:absolute;top:5px;right:6px;color:#c0b4a4}
+.di-dot{width:5px;height:5px;border-radius:50%;background:#D4AA5A;position:absolute;bottom:5px}
+.day-item.today .di-dot{background:rgba(255,255,255,.7)}
+
+/* ══════════════════════════════
+   묵상 내용
+══════════════════════════════ */
+#devotion{display:flex;flex-direction:column;background:#FDF6EC}
+.app-header{background:linear-gradient(135deg,#2c1f0e,#5a3a1a);padding:16px 20px 12px;text-align:center;position:relative;flex-shrink:0}
+.app-header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#D4AA5A,transparent)}
+.ah-back{position:absolute;left:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:#C49A3A;font-size:20px;cursor:pointer;-webkit-tap-highlight-color:transparent;line-height:1;padding:4px}
+.ah-title{font-size:13px;letter-spacing:4px;color:#D4AA5A;font-weight:300}
+.ah-sub{font-size:10px;color:rgba(255,255,255,.35);letter-spacing:2px;margin-top:3px;font-weight:300}
+
+.nav-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;flex-shrink:0}
+.nav-btn{width:36px;height:36px;background:none;border:1.5px solid #d4b896;border-radius:50%;color:#7a5c3a;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
+.nav-btn:active{background:#F5E9D4}
+.nav-btn:disabled{opacity:.3;cursor:default}
+.date-badge{text-align:center}
+.db-date{font-size:11px;letter-spacing:3px;color:#7a5c3a;font-weight:300}
+.db-num{font-size:22px;font-weight:700;color:#B8892A;line-height:1}
+.db-lbl{font-size:10px;color:#7a5c3a;font-weight:300;letter-spacing:2px}
+
+.scroll-area{flex:1;overflow-y:auto;padding:0 16px 16px;-webkit-overflow-scrolling:touch}
+
+/* 잠금 화면 */
+.lock-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(58,42,26,.09);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 30px;text-align:center;margin-top:8px}
+.lock-icon{font-size:42px;margin-bottom:16px;animation:pulse 2s infinite}
+.lock-title{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;color:#3A2A1A;margin-bottom:10px}
+.lock-msg{font-size:13px;color:#9A7A5A;line-height:1.8}
+.lock-date{font-size:11px;color:#B8892A;letter-spacing:2px;margin-top:10px;font-weight:400}
+
+/* 내용 카드 */
+.card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(58,42,26,.09);margin-top:8px;animation:up .4s ease both}
+.card-top{height:4px;background:linear-gradient(90deg,#B8892A,#D4AA5A,#B8892A)}
+.card-head{padding:20px 22px 14px;border-bottom:1px solid #f0e8dc;text-align:center}
+.dev-date{font-size:10px;color:#7a5c3a;letter-spacing:3px;margin-bottom:8px;font-weight:300}
+.dev-title{font-size:18px;font-weight:700;color:#3a2a1a;line-height:1.5}
+.title-deco{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px}
+.tdl{flex:1;height:1px;max-width:50px;background:linear-gradient(90deg,transparent,#d4b896)}
+.tdr{flex:1;height:1px;max-width:50px;background:linear-gradient(90deg,#d4b896,transparent)}
+.card-body{padding:20px 22px}
+.dev-text{font-size:15px;line-height:2.0;color:#2c1f0e;word-break:keep-all;white-space:pre-wrap}
+.dev-text em{font-style:normal;color:#B8892A;font-weight:600}
+.scripture-box{margin:18px 0 0;background:linear-gradient(135deg,#fdf0de,#faf3e8);border-left:3px solid #B8892A;border-radius:0 6px 6px 0;padding:12px 14px}
+.sc-label{font-size:9px;letter-spacing:3px;color:#B8892A;margin-bottom:5px}
+.sc-text{font-size:13px;line-height:1.9;color:#6b4c2a;font-style:italic;word-break:keep-all}
+.sc-ref{font-size:11px;color:#9a7a5a;text-align:right;margin-top:5px;font-style:normal}
+
+.prog-wrap{padding:0 16px 16px;flex-shrink:0}
+.prog-row{display:flex;justify-content:space-between;font-size:10px;color:#9a7a5a;font-weight:300;margin-bottom:6px}
+.prog-bar{height:3px;background:#e8ddd0;border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,#B8892A,#D4AA5A);border-radius:2px;transition:width .8s ease}
+</style>
+</head>
+<body>
+<div class="screen">
+
+<!-- ══ 표지 ══ -->
+<div id="cover" class="page active">
+  <div class="cv-top">
+    <div class="church-lbl">무학교회 청년부 7공동체</div>
+    <div class="f-tl"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" id="sm1"></svg></div>
+    <div class="f-tr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" id="sm2"></svg></div>
+    <div class="f-main"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" id="lg1"></svg></div>
+    <div class="gold-bar"></div>
+  </div>
+  <div class="cv-bottom">
+    <div class="f-bl"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" id="sm3"></svg></div>
+    <div class="f-br"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" id="sm4"></svg></div>
+    <div class="t1">기쁨의</div>
+    <div class="t2">50일</div>
+    <div class="deco">
+      <div class="dl"></div>
+      <svg width="18" height="18" viewBox="0 0 24 24"><rect x="10" y="2" width="4" height="20" rx="1" fill="#B8892A"/><rect x="3" y="8" width="18" height="4" rx="1" fill="#B8892A"/></svg>
+      <div class="dr"></div>
+    </div>
+    <div class="sub">부활절 묵상집</div>
+    <div class="dt">2026. 4. 5 — 5. 24</div>
+    <button class="start-btn" onclick="goPage('list')">묵상 시작하기 ›</button>
+    <div class="cv-scripture">
+      <div class="cv-sv">"씨를 뿌리며 울며 나가는 자는 반드시 기쁨으로 그 곡식 단을 가지고 돌아오리로다"</div>
+      <div class="cv-sr">— 시편 126:6</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 묵상 목록 ══ -->
+<div id="list" class="page hidden-right">
+  <div class="list-header">
+    <button class="lh-back" onclick="goPage('cover')">‹</button>
+    <div class="lh-title">기쁨의 50일</div>
+    <div class="lh-sub">무학교회 청년부 7공동체</div>
+  </div>
+  <div class="list-scroll" id="list-scroll"></div>
+</div>
+
+<!-- ══ 묵상 내용 ══ -->
+<div id="devotion" class="page hidden-right">
+  <div class="app-header">
+    <button class="ah-back" onclick="goPage('list')">‹</button>
+    <div class="ah-title">기쁨의 50일</div>
+    <div class="ah-sub">무학교회 청년부 7공동체</div>
+  </div>
+  <div class="nav-bar">
+    <button class="nav-btn" id="btn-prev" onclick="changeDay(-1)">&#8249;</button>
+    <div class="date-badge">
+      <div class="db-date" id="db-date">04 · 05</div>
+      <div class="db-num" id="db-num">1</div>
+      <div class="db-lbl">DAY</div>
+    </div>
+    <button class="nav-btn" id="btn-next" onclick="changeDay(1)">&#8250;</button>
+  </div>
+  <div class="scroll-area" id="scroll-area">
+    <!-- 내용 렌더 영역 -->
+  </div>
+  <div class="prog-wrap">
+    <div class="prog-row"><span>오늘의 묵상</span><span id="prog-txt">1 / 50</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:2%"></div></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* ══════════════════════════════
+   꽃 SVG 생성
+══════════════════════════════ */
+function makePetals(cx,cy,layers){
+  let s='';
+  layers.forEach(l=>{
+    for(let i=0;i<l.n;i++){
+      const a=(360/l.n)*i+(l.off||0);
+      const c=l.cols[i%l.cols.length];
+      s+=`<ellipse cx="${cx}" cy="${cy-l.r}" rx="${l.rx}" ry="${l.ry}" fill="${c}" transform="rotate(${a},${cx},${cy})" opacity="${l.op||1}"/>`;
+    }
+  });
+  return s;
+}
+function drawFlower(id,cx,cy,sc){
+  const L=[
+    {n:14,r:58*sc,rx:10*sc,ry:22*sc,cols:['#D44800','#E8620A','#C83A00','#F08030'],off:0,op:.95},
+    {n:12,r:46*sc,rx:9*sc,ry:18*sc,cols:['#F08030','#F5A623','#E86820'],off:13},
+    {n:10,r:36*sc,rx:8*sc,ry:15*sc,cols:['#F5A623','#FBCA3A','#F0AA20'],off:0},
+    {n:8, r:26*sc,rx:7*sc,ry:12*sc,cols:['#FBCA3A','#FFD966'],off:22},
+    {n:6, r:17*sc,rx:5*sc,ry:9*sc, cols:['#FFD966','#FFE680'],off:10},
+  ];
+  const el=document.getElementById(id);
+  el.innerHTML=makePetals(cx,cy,L)
+    +`<circle cx="${cx}" cy="${cy}" r="${14*sc}" fill="#5A2800"/>`
+    +`<circle cx="${cx}" cy="${cy}" r="${9*sc}"  fill="#7B3F00"/>`
+    +`<circle cx="${cx}" cy="${cy}" r="${5*sc}"  fill="#9B5A00"/>`;
+}
+drawFlower('lg1',120,120,1.0);
+['sm1','sm2','sm3','sm4'].forEach(id=>drawFlower(id,100,100,0.72));
+
+/* ══════════════════════════════
+   날짜 데이터 (4/5 ~ 5/24, 50일)
+══════════════════════════════ */
+const WEEKDAY=['일','월','화','수','목','금','토'];
+function getDay50(){
+  const days=[];
+  const start=new Date(2026,3,5); // 4월 5일
+  for(let i=0;i<50;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);
+    const m=d.getMonth()+1,dd=d.getDate(),w=WEEKDAY[d.getDay()];
+    days.push({
+      index:i,
+      dayNum:i+1,
+      date:d,
+      display:`${String(m).padStart(2,'0')} · ${String(dd).padStart(2,'0')}`,
+      label:`${m}/${dd}`,
+      fullDate:`2026년 ${m}월 ${dd}일 ${w}요일`,
+      month:m
+    });
+  }
+  return days;
+}
+const DAYS=getDay50();
+
+/* ══════════════════════════════
+   묵상 내용
+   (내용이 없는 날은 null → 추후 채워주세요)
+══════════════════════════════ */
+const CONTENT={
+  // ── Day 5 : 4월 9일 ──
+  5:{
+    title:"언제나 승리하시는 주님",
+    body:`소망의 하나님 아버지, 새 아침에 나를 깨우시니 감사합니다.\n\n오늘 해야 하는 일들이 순조롭게 하소서. 그것이 무슨 일이든 주님의 도우심이 필요합니다. 내가 일을 망친다 하더라도 주님이 새롭게 하실 줄 믿습니다. 나의 <em>실패가 주님의 실패가 아니기에</em> 오늘도 소망을 갖습니다. 주님은 언제나 승리하는 분이십니다. 그 믿음으로 오늘도 새로운 시작을 선포합니다.\n\n오늘 내 손에 들린 일을 하는 데 있어 늘 하던 일이 아니라 새로운 일처럼 임하게 하소서. 내게 맡겨진 일이 있음에 감사하고 즐거웠던 처음의 마음을 회복하기 원합니다. 업무뿐만 아니라 모든 사람들과의 첫 만남을 생각하며 감사하는 하루 되게 하소서. 나의 주 소망이 되시는 예수 그리스도의 이름으로 기도합니다. 아멘!`,
+    scripture:"내가 달려갈 길과 주 예수께 받은 사명 곧 하나님의 은혜의 복음을 증언하는 일을 마치려 함에는 나의 생명조차 조금도 귀한 것으로 여기지 아니하노라",
+    ref:"— 사도행전 20:24"
+  },
+  // ── 여기에 Day 1~4, 6~50 내용을 추가하세요 ──
+  // 형식:
+  // dayNum: {
+  //   title: "제목",
+  //   body: `본문 내용\n\n두 번째 단락`,
+  //   scripture: "말씀 구절",
+  //   ref: "— 책 장:절"
+  // },
+};
+
+/* ══════════════════════════════
+   날짜 잠금 판별
+══════════════════════════════ */
+function isUnlocked(dayObj){
+  const today=new Date();today.setHours(0,0,0,0);
+  const d=new Date(dayObj.date);d.setHours(0,0,0,0);
+  return d<=today;
+}
+function isToday(dayObj){
+  const today=new Date();
+  return dayObj.date.getFullYear()===today.getFullYear()
+    &&dayObj.date.getMonth()===today.getMonth()
+    &&dayObj.date.getDate()===today.getDate();
+}
+
+/* ══════════════════════════════
+   목록 렌더
+══════════════════════════════ */
+function renderList(){
+  const wrap=document.getElementById('list-scroll');
+  let html='';
+  let curMonth=null;
+  // 월별로 묶기
+  let rows=[];
+  DAYS.forEach((d,i)=>{
+    if(d.month!==curMonth){
+      if(rows.length)html+=buildMonth(rows,curMonth);
+      rows=[d];curMonth=d.month;
+    } else rows.push(d);
+  });
+  if(rows.length)html+=buildMonth(rows,curMonth);
+  wrap.innerHTML=html;
+}
+function buildMonth(rows,m){
+  const labels=['','1월','2월','3월','4월','5월','6월'];
+  let h=`<div class="month-label">${labels[m]}</div><div class="day-grid">`;
+  rows.forEach(d=>{
+    const unlocked=isUnlocked(d),tod=isToday(d);
+    const cls=tod?'today':unlocked?'unlocked':'locked';
+    const past=unlocked&&!tod?' past':'';
+    const lock=!unlocked?`<span class="di-lock">🔒</span>`:'';
+    const dot=unlocked?`<span class="di-dot"></span>`:'';
+    const onclick=unlocked?`onclick="openDay(${d.index})"`:'' ;
+    h+=`<div class="day-item ${cls}${past}" ${onclick}>
+      ${lock}
+      <span class="di-num">${d.dayNum}</span>
+      <span class="di-date">${d.label}</span>
+      ${dot}
+    </div>`;
+  });
+  h+=`</div>`;
+  return h;
+}
+
+/* ══════════════════════════════
+   묵상 내용 렌더
+══════════════════════════════ */
+let curDay=0;
+function openDay(index){
+  curDay=index;
+  renderDay(index);
+  goPage('devotion');
+}
+function renderDay(index){
+  const d=DAYS[index];
+  const area=document.getElementById('scroll-area');
+  document.getElementById('db-date').textContent=d.display;
+  document.getElementById('db-num').textContent=d.dayNum;
+  const pct=Math.max(2,Math.round((d.dayNum/50)*100));
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-txt').textContent=`${d.dayNum} / 50`;
+
+  // 이전/다음 버튼
+  document.getElementById('btn-prev').disabled=index<=0||!isUnlocked(DAYS[index-1]);
+  document.getElementById('btn-next').disabled=index>=49||!isUnlocked(DAYS[index+1]);
+
+  // 잠금 여부
+  if(!isUnlocked(d)){
+    area.innerHTML=`<div class="lock-card">
+      <div class="lock-icon">🔒</div>
+      <div class="lock-title">${d.fullDate}</div>
+      <div class="lock-msg">이 날의 묵상은<br>아직 열리지 않았어요.</div>
+      <div class="lock-date">${d.label} 에 다시 방문해 주세요</div>
+    </div>`;
+    return;
+  }
+
+  const c=CONTENT[d.dayNum];
+  if(!c){
+    area.innerHTML=`<div class="lock-card">
+      <div class="lock-icon">✍️</div>
+      <div class="lock-title">${d.fullDate}</div>
+      <div class="lock-msg">묵상 내용이 곧 업로드됩니다.<br>조금만 기다려 주세요.</div>
+      <div class="lock-date">Day ${d.dayNum}</div>
+    </div>`;
+    return;
+  }
+
+  area.innerHTML=`<div class="card" id="dv-card">
+    <div class="card-top"></div>
+    <div class="card-head">
+      <div class="dev-date">${d.fullDate}</div>
+      <div class="dev-title">${c.title}</div>
+      <div class="title-deco">
+        <div class="tdl"></div>
+        <svg width="14" height="14" viewBox="0 0 24 24"><rect x="10" y="2" width="4" height="20" rx="1" fill="#B8892A"/><rect x="3" y="8" width="18" height="4" rx="1" fill="#B8892A"/></svg>
+        <div class="tdr"></div>
+      </div>
+    </div>
+    <div class="card-body">
+      <p class="dev-text">${c.body}</p>
+      ${c.scripture?`<div class="scripture-box">
+        <div class="sc-label">✦ 오늘의 말씀</div>
+        <p class="sc-text">${c.scripture}</p>
+        <div class="sc-ref">${c.ref||''}</div>
+      </div>`:''}
+    </div>
+  </div>`;
+  area.scrollTop=0;
+}
+function changeDay(dir){
+  const next=curDay+dir;
+  if(next<0||next>49||!isUnlocked(DAYS[next]))return;
+  curDay=next;renderDay(curDay);
+  document.getElementById('scroll-area').scrollTop=0;
+}
+
+/* ══════════════════════════════
+   페이지 전환
+══════════════════════════════ */
+const PAGES=['cover','list','devotion'];
+const ORDER={cover:0,list:1,devotion:2};
+let curPage='cover';
+function goPage(to){
+  const fromEl=document.getElementById(curPage);
+  const toEl  =document.getElementById(to);
+  const goRight=ORDER[to]>ORDER[curPage];
+  fromEl.classList.remove('active');
+  fromEl.classList.add(goRight?'hidden-left':'hidden-right');
+  toEl.classList.remove('hidden-left','hidden-right');
+  toEl.classList.add('active');
+  curPage=to;
+  if(to==='list')renderList();
+}
+
+/* ══ 초기화 ══ */
+renderList();
+</script>
+</body>
+</html>
