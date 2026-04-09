@@ -348,38 +348,23 @@ function isToday(dayObj){
 ══════════════════════════════ */
 function renderList(){
   const wrap=document.getElementById('list-scroll');
-  let html='';
-  let curMonth=null;
-  // 월별로 묶기
-  let rows=[];
-  DAYS.forEach((d,i)=>{
-    if(d.month!==curMonth){
-      if(rows.length)html+=buildMonth(rows,curMonth);
-      rows=[d];curMonth=d.month;
-    } else rows.push(d);
-  });
-  if(rows.length)html+=buildMonth(rows,curMonth);
-  wrap.innerHTML=html;
-}
-function buildMonth(rows,m){
-  const labels=['','1월','2월','3월','4월','5월','6월'];
-  let h=`<div class="month-label">${labels[m]}</div><div class="day-grid">`;
-  rows.forEach(d=>{
+  let html=`<div class="day-grid">`;
+  DAYS.forEach(d=>{
     const unlocked=isUnlocked(d),tod=isToday(d);
     const cls=tod?'today':unlocked?'unlocked':'locked';
     const past=unlocked&&!tod?' past':'';
     const lock=!unlocked?`<span class="di-lock">🔒</span>`:'';
     const dot=unlocked?`<span class="di-dot"></span>`:'';
     const onclick=unlocked?`onclick="openDay(${d.index})"`:'' ;
-    h+=`<div class="day-item ${cls}${past}" ${onclick}>
+    html+=`<div class="day-item ${cls}${past}" ${onclick}>
       ${lock}
       <span class="di-num">${d.dayNum}</span>
       <span class="di-date">${d.label}</span>
       ${dot}
     </div>`;
   });
-  h+=`</div>`;
-  return h;
+  html+=`</div>`;
+  wrap.innerHTML=html;
 }
 
 /* ══════════════════════════════
